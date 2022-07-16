@@ -1,9 +1,13 @@
-const showToastButton = document.getElementById('showToastButton')
-showToastButton.onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'showToast' } }, '*')
-}
+import { StrictMode } from 'react'
 
-const closeButton = document.getElementById('closeButton')
-closeButton.onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'close' } }, '*')
-}
+import { render } from 'react-dom'
+
+import App from './App/App'
+
+const rootElement = document.getElementById('app')
+render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+  rootElement
+)
