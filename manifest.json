@@ -1,0 +1,13 @@
+{
+  "name": "color-toolbox",
+  "id": "1130053964777309836",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma",
+    "figjam"
+  ],
+  "containsWidget": true,
+  "widgetApi": "1.0.0",
+  "ui": "ui.html"
+}
