@@ -1,7 +1,7 @@
 // This widget will open an Iframe window with buttons to show a toast message and close the window.
 
 const { widget } = figma
-const { useEffect, Text } = widget
+const { useEffect, Text: TextWidget } = widget
 
 function Widget() {
   useEffect(() => {
@@ -16,7 +16,7 @@ function Widget() {
   })
 
   return (
-    <Text
+    <TextWidget
       fontSize={24}
       onClick={
         // Use async callbacks or return a promise to keep the Iframe window
@@ -26,10 +26,9 @@ function Widget() {
           new Promise((resolve) => {
             figma.showUI(__html__)
           })
-      }
-    >
+      }>
       Open IFrame
-    </Text>
+    </TextWidget>
   )
 }
 
