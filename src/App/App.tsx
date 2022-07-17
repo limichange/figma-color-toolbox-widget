@@ -2,20 +2,18 @@ import { useState } from 'react'
 import { RgbaColorPicker } from 'react-colorful'
 import { postMessage } from './postMessage'
 import './app.css'
+import { RgbaColor } from '../utils/convert'
 
 export const App = () => {
-  const [color, setColor] = useState({
-    r: 255,
-    g: 0,
-    b: 0,
-    a: 1,
-  })
+  const [color, setColor] = useState<RgbaColor>()
 
-  postMessage({
-    type: 'get current widget color',
-  }).then((res: any) => {
-    setColor(res.color)
-  })
+  if (!color) {
+    postMessage({
+      type: 'get current widget color',
+    }).then((res: any) => {
+      setColor(res.color)
+    })
+  }
 
   return (
     <div
