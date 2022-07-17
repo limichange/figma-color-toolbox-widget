@@ -47,6 +47,22 @@ function Widget() {
     setBackgroundColor(bg)
 
     setHue(hsva.h)
+
+    const styles = figma.getLocalPaintStyles()
+
+    if (styles[0]) {
+      styles[0].paints = [
+        {
+          type: 'SOLID',
+          color: {
+            r: color.r / 255,
+            g: color.g / 255,
+            b: color.b / 255,
+          },
+          opacity: color.a,
+        },
+      ]
+    }
   }
 
   useEffect(() => {
