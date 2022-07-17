@@ -35,6 +35,31 @@ const format = (number: number) => {
   return hex.length < 2 ? '0' + hex : hex
 }
 
+export const hsvaToHex = (hsva: HsvaColor): string =>
+  rgbaToHex(hsvaToRgba(hsva))
+
+export const hsvaToRgba = ({ h, s, v, a }: HsvaColor): RgbaColor => {
+  h = (h / 360) * 6
+  s = s / 100
+  v = v / 100
+
+  const hh = Math.floor(h),
+    b = v * (1 - s),
+    c = v * (1 - (h - hh) * s),
+    d = v * (1 - (1 - h + hh) * s),
+    module = hh % 6
+
+  return {
+    // @ts-ignore
+    r: round([v, c, b, b, d, v][module] * 255),
+    // @ts-ignore
+    g: round([d, v, v, c, b, b][module] * 255),
+    // @ts-ignore
+    b: round([b, b, d, v, v, c][module] * 255),
+    a: round(a, 2),
+  }
+}
+
 export const rgbaToHex = ({ r, g, b }: RgbaColor): string => {
   return '#' + format(r) + format(g) + format(b)
 }
