@@ -50,6 +50,7 @@ function Widget() {
 
     const styles = figma.getLocalPaintStyles()
 
+    // todo: update bind style
     if (styles[0]) {
       styles[0].paints = [
         {
@@ -87,6 +88,7 @@ function Widget() {
       return new Promise((resolve) => {
         const styles = figma.getLocalPaintStyles()
 
+        // todo: get bind style
         if (styles[0]) {
           styles[0]?.paints.forEach((fill: Paint) => {
             if (fill.type === 'SOLID') {
