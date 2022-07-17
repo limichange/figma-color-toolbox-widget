@@ -1,5 +1,6 @@
-import { menu, onMenuChange } from './menu'
-import { hsvaToHex, rgbaToHsva } from '../utils/convert'
+import { menu } from './menu'
+import { hsvaToHex, RgbaColor, rgbaToHsva } from '../utils/convert'
+import { svgSrc, svgSrc2 } from './svg'
 
 const { widget } = figma
 const {
@@ -32,59 +33,66 @@ function Widget() {
     ''
   )
 
+  function updateColor(color: RgbaColor) {
+    const hsva = rgbaToHsva(color)
+    setColor(color)
+
+    setPointerPostion({
+      x: hsva.s / 100,
+      y: 1 - hsva.v / 100,
+    })
+
+    const bg = hsvaToHex({ h: hsva.h, s: 100, v: 100, a: 1 })
+
+    setBackgroundColor(bg)
+
+    setHue(hsva.h)
+  }
+
   useEffect(() => {
     figma.ui.onmessage = (message) => {
       if (message.type === 'update color value') {
-        const hsva = rgbaToHsva(message.color)
-        setColor(message.color)
-
-        setPointerPostion({
-          x: hsva.s / 100,
-          y: 1 - hsva.v / 100,
-        })
-
-        const bg = hsvaToHex({ h: hsva.h, s: 100, v: 100, a: 1 })
-
-        setBackgroundColor(bg)
-
-        setHue(hsva.h)
+        updateColor(message.color)
       }
     }
   })
 
-  const svgSrc = `
-  <svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="256" height="256" fill="url(#paint0_linear_25_40)"/>
-    <rect x="0" y="0" width="256" height="256" fill="url(#paint1_linear_25_40)"/>
-    <defs>
-    <linearGradient id="paint0_linear_25_40" x1="256" y1="110" x2="0.471558" y2="110" gradientUnits="userSpaceOnUse">
-    <stop stop-color="white" stop-opacity="0"/>
-    <stop offset="1" stop-color="white"/>
-    </linearGradient>
-    <linearGradient id="paint1_linear_25_40" x1="128" y1="0" x2="128" y2="256" gradientUnits="userSpaceOnUse">
-    <stop stop-opacity="0"/>
-    <stop offset="1"/>
-    </linearGradient>
-    </defs>
-  </svg>
-  `
+  const onMenuChange: (
+    event: WidgetPropertyEvent
+  ) => void | Promise<void> = async (event) => {
+    if (event.propertyName === 'open') {
+      return new Promise(() => {
+        figma.showUI(__html__, {
+          width: 240,
+          height: 240,
+        })
+      })
+    } else if (event.propertyName === 'update') {
+      return new Promise((resolve) => {
+        const styles = figma.getLocalPaintStyles()
 
-  const svgSrc2 = `
-  <svg width="256" height="20" viewBox="0 0 256 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0" y="0" width="256" height="20" fill="url(#paint0_linear_30_55)"/>
-  <defs>
-  <linearGradient id="paint0_linear_30_55" x1="0.0146492" y1="10.5185" x2="256.015" y2="10.5185" gradientUnits="userSpaceOnUse">
-  <stop stop-color="#FF0000"/>
-  <stop offset="0.17" stop-color="#FFFF54"/>
-  <stop offset="0.33" stop-color="#7DFC4D"/>
-  <stop offset="0.50" stop-color="#75FBF9"/>
-  <stop offset="0.67" stop-color="#0813F6"/>
-  <stop offset="0.83" stop-color="#EA33F3"/>
-  <stop offset="1" stop-color="#FF0000"/>
-  </linearGradient>
-  </defs>
-  </svg>
-  `
+        if (styles[0]) {
+          styles[0]?.paints.forEach((fill: Paint) => {
+            if (fill.type === 'SOLID') {
+              const { r = 0, g = 0, b = 0 } = fill.color
+              const { opacity = 1 } = fill
+              const rgba = {
+                r: r * 255,
+                g: g * 255,
+                b: b * 255,
+                a: opacity,
+              }
+
+              updateColor(rgba)
+              resolve()
+            }
+          })
+        }
+      })
+    }
+
+    return
+  }
 
   usePropertyMenu(menu, onMenuChange)
 
@@ -142,7 +150,14 @@ function Widget() {
       h(
         Text,
         {},
-        'R:' + color.r + ' G:' + color.g + ' B:' + color.b + ' A:' + color.a
+        'R:' +
+          color.r.toFixed(0) +
+          ' G:' +
+          color.g.toFixed(0) +
+          ' B:' +
+          color.b.toFixed(0) +
+          ' A:' +
+          color.a.toFixed(2)
       ),
       h(Text, {}, hsvaToHex(rgbaToHsva(color)))
     )
