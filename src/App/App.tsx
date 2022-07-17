@@ -11,6 +11,12 @@ export const App = () => {
     a: 1,
   })
 
+  postMessage({
+    type: 'get current widget color',
+  }).then((res: any) => {
+    setColor(res.color)
+  })
+
   return (
     <div
       style={{
@@ -19,6 +25,7 @@ export const App = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        gap: 6,
         justifyContent: 'center',
       }}>
       <RgbaColorPicker

@@ -7,14 +7,17 @@ const {
   useEffect,
   SVG,
   AutoLayout,
+  waitForTask,
   usePropertyMenu,
   useSyncedState,
   Text,
   Ellipse,
+  Input,
 } = widget
 const h = figma.widget.h
 
 function Widget() {
+  const [styleName, setStyleName] = useSyncedState('styleName', '')
   const [hue, setHue] = useSyncedState('hue', 0)
   const [color, setColor] = useSyncedState('color', {
     r: 255,
@@ -33,7 +36,7 @@ function Widget() {
     ''
   )
 
-  function updateColor(color: RgbaColor) {
+  function updateWidgetColor(color: RgbaColor) {
     const hsva = rgbaToHsva(color)
     setColor(color)
 
@@ -47,29 +50,39 @@ function Widget() {
     setBackgroundColor(bg)
 
     setHue(hsva.h)
+  }
 
+  function updateLocalPaintStyle(name: string, color: RgbaColor) {
     const styles = figma.getLocalPaintStyles()
 
-    // todo: update bind style
-    if (styles[0]) {
-      styles[0].paints = [
-        {
-          type: 'SOLID',
-          color: {
-            r: color.r / 255,
-            g: color.g / 255,
-            b: color.b / 255,
+    styles.forEach((style: PaintStyle) => {
+      if (name === style.name) {
+        style.paints = [
+          {
+            type: 'SOLID',
+            color: {
+              r: color.r / 255,
+              g: color.g / 255,
+              b: color.b / 255,
+            },
+            opacity: color.a,
           },
-          opacity: color.a,
-        },
-      ]
-    }
+        ]
+      }
+    })
   }
 
   useEffect(() => {
     figma.ui.onmessage = (message) => {
       if (message.type === 'update color value') {
-        updateColor(message.color)
+        const color = message.color
+        updateWidgetColor(color)
+        updateLocalPaintStyle(styleName, color)
+      } else if (message.type === 'get current widget color') {
+        figma.ui.postMessage({
+          messageId: message.messageId,
+          color,
+        })
       }
     }
   })
@@ -86,30 +99,35 @@ function Widget() {
       })
     } else if (event.propertyName === 'update') {
       return new Promise((resolve) => {
-        const styles = figma.getLocalPaintStyles()
-
-        // todo: get bind style
-        if (styles[0]) {
-          styles[0]?.paints.forEach((fill: Paint) => {
-            if (fill.type === 'SOLID') {
-              const { r = 0, g = 0, b = 0 } = fill.color
-              const { opacity = 1 } = fill
-              const rgba = {
-                r: r * 255,
-                g: g * 255,
-                b: b * 255,
-                a: opacity,
-              }
-
-              updateColor(rgba)
-              resolve()
-            }
-          })
-        }
+        updateBindStyleWidgetColor()
+        resolve()
       })
     }
 
     return
+  }
+
+  function updateBindStyleWidgetColor(name = '') {
+    const styles = figma.getLocalPaintStyles()
+
+    styles.forEach((style: PaintStyle) => {
+      if (style.name === styleName || name === style.name) {
+        style.paints.forEach((fill: Paint) => {
+          if (fill.type === 'SOLID') {
+            const { r = 0, g = 0, b = 0 } = fill.color
+            const { opacity = 1 } = fill
+            const rgba = {
+              r: r * 255,
+              g: g * 255,
+              b: b * 255,
+              a: opacity,
+            }
+
+            updateWidgetColor(rgba)
+          }
+        })
+      }
+    })
   }
 
   usePropertyMenu(menu, onMenuChange)
@@ -120,6 +138,29 @@ function Widget() {
       direction: 'vertical',
       spacing: 6,
     },
+    h(
+      AutoLayout,
+      {
+        spacing: 6,
+      },
+      h(Text, {}, 'Style: '),
+      h(Input, {
+        value: styleName,
+        placeholder: 'input style name',
+        onTextEditEnd: (e: any) => {
+          const styleName = e.characters
+          setStyleName(styleName)
+
+          waitForTask(
+            new Promise((resolve) => {
+              updateBindStyleWidgetColor(styleName)
+              resolve(true)
+            })
+          )
+        },
+        inputBehavior: 'wrap',
+      })
+    ),
     h(
       AutoLayout,
       {
