@@ -54,14 +54,17 @@ function Widget() {
     [
       {
         itemType: 'action',
-        tooltip: 'Open',
+        tooltip: 'Open Color Picker',
         propertyName: 'open',
         icon: 'open',
       },
       {
+        itemType: 'separator',
+      },
+      {
         itemType: 'action',
-        tooltip: 'Update',
-        propertyName: 'open',
+        tooltip: 'Update Color',
+        propertyName: 'update',
       },
     ],
     ({ propertyName }) => {
