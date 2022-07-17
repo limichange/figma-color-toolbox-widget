@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { RgbaColorPicker } from 'react-colorful'
+import { postMessage } from './postMessage'
 import './app.css'
 
 export const App = () => {
@@ -20,7 +21,16 @@ export const App = () => {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <RgbaColorPicker color={color} onChange={setColor} />
+      <RgbaColorPicker
+        color={color}
+        onChange={(color) => {
+          setColor(color)
+          postMessage({
+            type: 'update color value',
+            color,
+          })
+        }}
+      />
     </div>
   )
 }

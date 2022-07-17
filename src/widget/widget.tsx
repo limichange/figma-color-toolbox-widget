@@ -6,13 +6,12 @@ const h = figma.widget.h
 
 function Widget() {
   useEffect(() => {
-    figma.ui.onmessage = (msg) => {
-      if (msg.type === 'showToast') {
-        figma.notify('Hello widget')
-      }
-      if (msg.type === 'close') {
-        figma.closePlugin()
-      }
+    figma.ui.onmessage = (message) => {
+      console.log(
+        'message',
+        message.type === 'update color value',
+        message.color
+      )
     }
   })
 
