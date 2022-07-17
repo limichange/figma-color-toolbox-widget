@@ -2,7 +2,7 @@
   "name": "color-toolbox",
   "id": "1130053964777309836",
   "api": "1.0.0",
-  "main": "dist/code.js",
+  "main": "dist/widget.js",
   "editorType": [
     "figma",
     "figjam"

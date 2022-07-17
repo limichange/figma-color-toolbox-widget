@@ -54,7 +54,13 @@ function Widget() {
     [
       {
         itemType: 'action',
-        tooltip: 'Open color picker',
+        tooltip: 'Open',
+        propertyName: 'open',
+        icon: 'open',
+      },
+      {
+        itemType: 'action',
+        tooltip: 'Update',
         propertyName: 'open',
       },
     ],
@@ -66,6 +72,8 @@ function Widget() {
             height: 250,
           })
         })
+      } else if (propertyName === 'update') {
+        console.log('update')
       }
 
       return
