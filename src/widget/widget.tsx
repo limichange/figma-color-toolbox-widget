@@ -142,6 +142,7 @@ function Widget() {
       AutoLayout,
       {
         spacing: 6,
+        padding: 6,
       },
       h(Text, {}, 'Style: '),
       h(Input, {
