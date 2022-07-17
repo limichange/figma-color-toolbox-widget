@@ -14,6 +14,7 @@ const {
 const h = figma.widget.h
 
 function Widget() {
+  const [hue, setHue] = useSyncedState('hue', 0)
   const [color, setColor] = useSyncedState('color', {
     r: 255,
     g: 0,
@@ -33,12 +34,6 @@ function Widget() {
 
   useEffect(() => {
     figma.ui.onmessage = (message) => {
-      console.log(
-        'message',
-        message.type === 'update color value',
-        rgbaToHsva(message.color)
-      )
-
       if (message.type === 'update color value') {
         const hsva = rgbaToHsva(message.color)
         setColor(message.color)
@@ -50,9 +45,9 @@ function Widget() {
 
         const bg = hsvaToHex({ h: hsva.h, s: 100, v: 100, a: 1 })
 
-        console.log('bg', bg)
-
         setBackgroundColor(bg)
+
+        setHue(hsva.h)
       }
     }
   })
@@ -74,22 +69,22 @@ function Widget() {
   </svg>
   `
 
-  // const svgSrc2 = `
-  // <svg width="256" height="20" viewBox="0 0 256 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-  // <rect x="0" y="0" width="256" height="20" fill="url(#paint0_linear_30_55)"/>
-  // <defs>
-  // <linearGradient id="paint0_linear_30_55" x1="0.0146492" y1="10.5185" x2="256.015" y2="10.5185" gradientUnits="userSpaceOnUse">
-  // <stop stop-color="#FF0000"/>
-  // <stop offset="0.17" stop-color="#FFFF54"/>
-  // <stop offset="0.33" stop-color="#7DFC4D"/>
-  // <stop offset="0.50" stop-color="#75FBF9"/>
-  // <stop offset="0.67" stop-color="#0813F6"/>
-  // <stop offset="0.83" stop-color="#EA33F3"/>
-  // <stop offset="1" stop-color="#FF0000"/>
-  // </linearGradient>
-  // </defs>
-  // </svg>
-  // `
+  const svgSrc2 = `
+  <svg width="256" height="20" viewBox="0 0 256 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="256" height="20" fill="url(#paint0_linear_30_55)"/>
+  <defs>
+  <linearGradient id="paint0_linear_30_55" x1="0.0146492" y1="10.5185" x2="256.015" y2="10.5185" gradientUnits="userSpaceOnUse">
+  <stop stop-color="#FF0000"/>
+  <stop offset="0.17" stop-color="#FFFF54"/>
+  <stop offset="0.33" stop-color="#7DFC4D"/>
+  <stop offset="0.50" stop-color="#75FBF9"/>
+  <stop offset="0.67" stop-color="#0813F6"/>
+  <stop offset="0.83" stop-color="#EA33F3"/>
+  <stop offset="1" stop-color="#FF0000"/>
+  </linearGradient>
+  </defs>
+  </svg>
+  `
 
   usePropertyMenu(menu, onMenuChange)
 
@@ -114,17 +109,36 @@ function Widget() {
           src: svgSrc,
           width: 256,
           height: 256,
+        }),
+        h(Ellipse, {
+          width: 16,
+          height: 16,
+          positioning: 'absolute',
+          x: pointerPostion.x * 256 - 8,
+          y: pointerPostion.y * 256 - 8,
+          stroke: '#ffffff',
+          strokeWidth: 2,
         })
       ),
-      h(Ellipse, {
-        width: 16,
-        height: 16,
-        positioning: 'absolute',
-        x: pointerPostion.x * 256 - 8,
-        y: pointerPostion.y * 256 - 8,
-        stroke: '#ffffff',
-        strokeWidth: 2,
-      }),
+      h(
+        AutoLayout,
+        {},
+        h(SVG, {
+          src: svgSrc2,
+          width: 256,
+          height: 20,
+        }),
+        h(Ellipse, {
+          width: 16,
+          height: 16,
+          positioning: 'absolute',
+          x: (hue / 360) * 256 - 8,
+          y: 2,
+          fill: backgroundColor,
+          stroke: '#ffffff',
+          strokeWidth: 2,
+        })
+      ),
       h(
         Text,
         {},
@@ -132,11 +146,7 @@ function Widget() {
       ),
       h(Text, {}, hsvaToHex(rgbaToHsva(color)))
     )
-    // h(SVG, {
-    //   src: svgSrc2,
-    //   width: 256,
-    //   height: 20,
-    // })
+
     // h(SVG, {
     //   src: `
     //   <svg width="263" height="21" viewBox="0 0 263 21" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
