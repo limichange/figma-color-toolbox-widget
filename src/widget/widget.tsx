@@ -1,23 +1,60 @@
 import { menu, onMenuChange } from './menu'
+import { rgbaToHex, rgbaToHsva } from '../utils/convert'
 
 const { widget } = figma
-const { useEffect, SVG, AutoLayout, usePropertyMenu } = widget
+const {
+  useEffect,
+  SVG,
+  AutoLayout,
+  usePropertyMenu,
+  useSyncedState,
+  Text,
+  Ellipse,
+} = widget
 const h = figma.widget.h
 
 function Widget() {
+  const [color, setColor] = useSyncedState('color', {
+    r: 255,
+    g: 0,
+    b: 0,
+    a: 1,
+  })
+
+  const [pointerPostion, setPointerPostion] = useSyncedState('pointerPostion', {
+    x: 0,
+    y: 0,
+  })
+
+  const [backgroundColor, setBackgroundColor] = useSyncedState(
+    'backgroundColor',
+    ''
+  )
+
   useEffect(() => {
     figma.ui.onmessage = (message) => {
       console.log(
         'message',
         message.type === 'update color value',
-        message.color
+        rgbaToHsva(message.color)
       )
+
+      if (message.type === 'update color value') {
+        const hsva = rgbaToHsva(message.color)
+        setColor(message.color)
+
+        setPointerPostion({
+          x: hsva.s / 100,
+          y: 1 - hsva.v / 100,
+        })
+
+        setBackgroundColor(rgbaToHex(message.color))
+      }
     }
   })
 
   const svgSrc = `
-  <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="256" height="256" fill="#FF9900"/>
+  <svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
     <rect x="0" y="0" width="256" height="256" fill="url(#paint0_linear_25_40)"/>
     <rect x="0" y="0" width="256" height="256" fill="url(#paint1_linear_25_40)"/>
     <defs>
@@ -58,11 +95,38 @@ function Widget() {
       direction: 'vertical',
       spacing: 6,
     },
-    h(SVG, {
-      src: svgSrc,
-      width: 256,
-      height: 256,
-    }),
+    h(
+      AutoLayout,
+      {
+        direction: 'vertical',
+        spacing: 6,
+      },
+      h(
+        AutoLayout,
+        {
+          fill: backgroundColor,
+        },
+        h(SVG, {
+          src: svgSrc,
+          width: 256,
+          height: 256,
+        })
+      ),
+      h(Ellipse, {
+        width: 16,
+        height: 16,
+        positioning: 'absolute',
+        x: pointerPostion.x * 256 - 8,
+        y: pointerPostion.y * 256 - 8,
+        stroke: '#ffffff',
+        strokeWidth: 2,
+      }),
+      h(
+        Text,
+        {},
+        'R:' + color.r + ' G:' + color.g + ' B:' + color.b + ' A:' + color.a
+      )
+    ),
     h(SVG, {
       src: svgSrc2,
       width: 256,
