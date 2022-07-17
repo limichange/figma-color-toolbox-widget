@@ -1,5 +1,8 @@
+import { menu, onMenuChange } from './menu'
+
 const { widget } = figma
 const { useEffect, SVG, AutoLayout, usePropertyMenu } = widget
+const h = figma.widget.h
 
 function Widget() {
   useEffect(() => {
@@ -48,40 +51,7 @@ function Widget() {
   </svg>
   `
 
-  const h = figma.widget.h
-
-  usePropertyMenu(
-    [
-      {
-        itemType: 'action',
-        tooltip: 'Open Color Picker',
-        propertyName: 'open',
-        icon: 'open',
-      },
-      {
-        itemType: 'separator',
-      },
-      {
-        itemType: 'action',
-        tooltip: 'Update Color',
-        propertyName: 'update',
-      },
-    ],
-    ({ propertyName }) => {
-      if (propertyName === 'open') {
-        return new Promise(() => {
-          figma.showUI(__html__, {
-            width: 250,
-            height: 250,
-          })
-        })
-      } else if (propertyName === 'update') {
-        console.log('update')
-      }
-
-      return
-    }
-  )
+  usePropertyMenu(menu, onMenuChange)
 
   return h(
     AutoLayout,
