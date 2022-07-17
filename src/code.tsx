@@ -1,12 +1,5 @@
 const { widget } = figma
-const {
-  useEffect,
-  Rectangle,
-  SVG,
-  AutoLayout,
-  usePropertyMenu,
-  useSyncedState,
-} = widget
+const { useEffect, SVG, AutoLayout, usePropertyMenu } = widget
 
 function Widget() {
   useEffect(() => {
@@ -19,13 +12,6 @@ function Widget() {
       }
     }
   })
-
-  const [color, setColor] = useSyncedState('theme', '#e06666')
-  const [fruit, setFruit] = useSyncedState('fruit', 'mango')
-  const fruitOptions = [
-    { option: 'mango', label: 'Mango' },
-    { option: 'apple', label: 'Apple' },
-  ]
 
   const svgSrc = `
   <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -68,44 +54,21 @@ function Widget() {
     [
       {
         itemType: 'action',
-        tooltip: 'Action',
-        propertyName: 'action',
-      },
-      {
-        itemType: 'separator',
-      },
-      {
-        itemType: 'color-selector',
-        propertyName: 'colors',
-        tooltip: 'Color selector',
-        selectedOption: color,
-        options: [
-          { option: '#e06666', tooltip: 'Red' },
-          { option: '#ffe599', tooltip: 'Yellow' },
-        ],
-      },
-      {
-        itemType: 'dropdown',
-        propertyName: 'fruits',
-        tooltip: 'Fruit selector',
-        selectedOption: fruit,
-        options: fruitOptions,
-      },
-      {
-        itemType: 'link',
-        propertyName: 'fruitLink',
-        tooltip: 'Learn about fruit!',
-        href: 'https://en.wikipedia.org/wiki/Fruit',
+        tooltip: 'Open color picker',
+        propertyName: 'open',
       },
     ],
-    ({ propertyName, propertyValue }) => {
-      if (propertyName === 'colors' && propertyValue) {
-        setColor(propertyValue)
-      } else if (propertyName === 'fruits' && propertyValue) {
-        setFruit(propertyValue)
-      } else if (propertyName === 'action') {
-        console.log(propertyName)
+    ({ propertyName }) => {
+      if (propertyName === 'open') {
+        return new Promise(() => {
+          figma.showUI(__html__, {
+            width: 250,
+            height: 250,
+          })
+        })
       }
+
+      return
     }
   )
 
@@ -115,22 +78,6 @@ function Widget() {
       direction: 'vertical',
       spacing: 6,
     },
-    h(Rectangle, {
-      width: 80,
-      height: 40,
-      fill: '#DDDDDD',
-      onClick:
-        // Use async callbacks or return a promise to keep the Iframe window
-        // opened. Resolving the promise, closing the Iframe window, or calling
-        // "figma.closePlugin()" will terminate the code.
-        () =>
-          new Promise(() => {
-            figma.showUI(__html__, {
-              width: 300,
-              height: 600,
-            })
-          }),
-    }),
     h(SVG, {
       src: svgSrc,
       width: 256,
