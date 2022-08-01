@@ -6,7 +6,7 @@ import {
   RgbaColor,
   rgbaToHsva,
 } from '../utils/convert'
-import { colorPickerSvg } from './images/colorPicker'
+import { colorPickerIcon } from './images/colorPickerIcon'
 import { horizontalSmallLayoutIcon } from './images/horizontalSmallLayoutIcon'
 import { updateIcon } from './images/updateIcon'
 import { verticalLargeLayoutIcon } from './images/verticalLargeLayoutIcon'
@@ -60,7 +60,7 @@ function Widget() {
       itemType: 'action',
       tooltip: 'Open Color Picker',
       propertyName: 'open',
-      icon: colorPickerSvg,
+      icon: colorPickerIcon,
     },
     {
       itemType: 'separator',
