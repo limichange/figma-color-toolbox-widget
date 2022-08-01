@@ -7,6 +7,10 @@ import {
   rgbaToHsva,
 } from '../utils/convert'
 import { colorPickerSvg } from './images/colorPicker'
+import { horizontalSmallLayoutIcon } from './images/horizontalSmallLayoutIcon'
+import { updateIcon } from './images/updateIcon'
+import { verticalLargeLayoutIcon } from './images/verticalLargeLayoutIcon'
+import { verticalSmallLayoutIcon } from './images/verticalSmallLayoutIcon'
 import { svgSrc, svgSrc2 } from './svg'
 
 const { widget } = figma
@@ -44,12 +48,12 @@ function Widget() {
   )
   const [colorFormat, setColorFormat] = useSyncedState('colorFormat', 'Hex')
 
-  const formatOptions = [
-    { option: 'Hex', label: 'Hex' },
-    { option: 'RGB', label: 'RGB' },
-    { option: 'HSL', label: 'HSL' },
-    { option: 'HSV', label: 'HSV' },
-  ]
+  // const formatOptions = [
+  //   { option: 'Hex', label: 'Hex' },
+  //   { option: 'RGB', label: 'RGB' },
+  //   { option: 'HSL', label: 'HSL' },
+  //   { option: 'HSV', label: 'HSV' },
+  // ]
 
   const menu: WidgetPropertyMenuItem[] = [
     {
@@ -59,17 +63,42 @@ function Widget() {
       icon: colorPickerSvg,
     },
     {
+      itemType: 'separator',
+    },
+    {
+      itemType: 'action',
+      tooltip: 'Vertical Layout',
+      propertyName: 'update',
+      icon: verticalSmallLayoutIcon,
+    },
+    {
+      itemType: 'action',
+      tooltip: 'Horizontal Layout',
+      propertyName: 'update',
+      icon: horizontalSmallLayoutIcon,
+    },
+    {
+      itemType: 'action',
+      tooltip: 'Vertical Large Layout',
+      propertyName: 'update',
+      icon: verticalLargeLayoutIcon,
+    },
+    {
+      itemType: 'separator',
+    },
+    {
       itemType: 'action',
       tooltip: 'Update Color',
       propertyName: 'update',
+      icon: updateIcon,
     },
-    {
-      itemType: 'dropdown',
-      propertyName: 'update color format',
-      tooltip: 'Format',
-      selectedOption: colorFormat,
-      options: formatOptions,
-    },
+    // {
+    //   itemType: 'dropdown',
+    //   propertyName: 'update color format',
+    //   tooltip: 'Format',
+    //   selectedOption: colorFormat,
+    //   options: formatOptions,
+    // },
   ]
 
   function updateWidgetColor(color: RgbaColor) {
