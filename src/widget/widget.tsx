@@ -1,4 +1,5 @@
 import { hsvaToHex, RgbaColor, rgbaToHsva } from '../utils/convert'
+import { ColorDisplayArea } from './components/ColorDisplayArea'
 import { colorPickerIcon } from './images/colorPickerIcon'
 import { horizontalSmallLayoutIcon } from './images/horizontalSmallLayoutIcon'
 import { updateIcon } from './images/updateIcon'
@@ -14,7 +15,7 @@ const {
   useSyncedState,
   // Text,
   // Input,
-  Rectangle,
+  // Rectangle,
 } = widget
 const h = figma.widget.h
 
@@ -199,14 +200,9 @@ function Widget() {
         direction: 'vertical',
         spacing: 6,
       },
-      // main color display area
-      h(Rectangle, {
-        name: 'color',
-        fill: backgroundColor,
-        width: 240,
-        height: 120,
+      h(ColorDisplayArea, {
+        color: backgroundColor,
       })
-
       // colorFormat === 'RGB' && h(Text, {}, hsvaToRgbaString(rgbaToHsva(color))),
       // colorFormat === 'Hex' && h(Text, {}, hsvaToHex(rgbaToHsva(color))),
       // colorFormat === 'HSL' && h(Text, {}, hsvaToHslaString(rgbaToHsva(color))),
