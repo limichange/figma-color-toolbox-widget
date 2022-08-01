@@ -26,6 +26,7 @@ export const App = () => {
         gap: 6,
         justifyContent: 'center',
       }}>
+      <input type='color' />
       <RgbaColorPicker
         color={color}
         onChange={(color) => {
