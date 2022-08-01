@@ -1,11 +1,4 @@
-import {
-  hsvaToHex,
-  hsvaToHslaString,
-  hsvaToHsvaString,
-  hsvaToRgbaString,
-  RgbaColor,
-  rgbaToHsva,
-} from '../utils/convert'
+import { hsvaToHex, RgbaColor, rgbaToHsva } from '../utils/convert'
 import { colorPickerIcon } from './images/colorPickerIcon'
 import { horizontalSmallLayoutIcon } from './images/horizontalSmallLayoutIcon'
 import { updateIcon } from './images/updateIcon'
@@ -16,16 +9,17 @@ const { widget } = figma
 const {
   useEffect,
   AutoLayout,
-  waitForTask,
+  // waitForTask,
   usePropertyMenu,
   useSyncedState,
-  Text,
-  Input,
+  // Text,
+  // Input,
+  Rectangle,
 } = widget
 const h = figma.widget.h
 
 function Widget() {
-  const [styleName, setStyleName] = useSyncedState('styleName', '')
+  const [styleName] = useSyncedState('styleName', 'test')
   const [, setHue] = useSyncedState('hue', 0)
   const [color, setColor] = useSyncedState('color', {
     r: 255,
@@ -34,8 +28,10 @@ function Widget() {
     a: 1,
   })
 
-  const [, setBackgroundColor] = useSyncedState('backgroundColor', '')
-  const [colorFormat, setColorFormat] = useSyncedState('colorFormat', 'Hex')
+  const [backgroundColor, setBackgroundColor] = useSyncedState(
+    'backgroundColor',
+    ''
+  )
 
   const menu: WidgetPropertyMenuItem[] = [
     {
@@ -80,9 +76,7 @@ function Widget() {
     const hsva = rgbaToHsva(color)
     setColor(color)
 
-    const bg = hsvaToHex({ h: hsva.h, s: 100, v: 100, a: 1 })
-
-    setBackgroundColor(bg)
+    setBackgroundColor(hsvaToHex(hsva))
 
     setHue(hsva.h)
   }
@@ -137,11 +131,6 @@ function Widget() {
         updateBindStyleWidgetColor()
         resolve()
       })
-    } else if (
-      event.propertyName === 'update color format' &&
-      event.propertyValue
-    ) {
-      setColorFormat(event.propertyValue)
     }
 
     return
@@ -172,46 +161,56 @@ function Widget() {
 
   usePropertyMenu(menu, onMenuChange)
 
+  console.log(backgroundColor)
+
   return h(
     AutoLayout,
     {
       direction: 'vertical',
       spacing: 6,
     },
-    h(
-      AutoLayout,
-      {
-        spacing: 6,
-        padding: 6,
-      },
-      h(Text, {}, 'Style: '),
-      h(Input, {
-        value: styleName,
-        placeholder: 'input style name',
-        onTextEditEnd: (e: any) => {
-          const styleName = e.characters
-          setStyleName(styleName)
+    // h(
+    //   AutoLayout,
+    //   {
+    //     spacing: 6,
+    //     padding: 6,
+    //   },
+    //   h(Text, {}, 'Style: '),
+    //   h(Input, {
+    //     value: styleName,
+    //     placeholder: 'input style name',
+    //     onTextEditEnd: (e: any) => {
+    //       const styleName = e.characters
+    //       setStyleName(styleName)
 
-          waitForTask(
-            new Promise((resolve) => {
-              updateBindStyleWidgetColor(styleName)
-              resolve(true)
-            })
-          )
-        },
-        inputBehavior: 'wrap',
-      })
-    ),
+    //       waitForTask(
+    //         new Promise((resolve) => {
+    //           updateBindStyleWidgetColor(styleName)
+    //           resolve(true)
+    //         })
+    //       )
+    //     },
+    //     inputBehavior: 'wrap',
+    //   })
+    // ),
     h(
       AutoLayout,
       {
         direction: 'vertical',
         spacing: 6,
       },
-      colorFormat === 'RGB' && h(Text, {}, hsvaToRgbaString(rgbaToHsva(color))),
-      colorFormat === 'Hex' && h(Text, {}, hsvaToHex(rgbaToHsva(color))),
-      colorFormat === 'HSL' && h(Text, {}, hsvaToHslaString(rgbaToHsva(color))),
-      colorFormat === 'HSV' && h(Text, {}, hsvaToHsvaString(rgbaToHsva(color)))
+      // main color display area
+      h(Rectangle, {
+        name: 'color',
+        fill: backgroundColor,
+        width: 240,
+        height: 120,
+      })
+
+      // colorFormat === 'RGB' && h(Text, {}, hsvaToRgbaString(rgbaToHsva(color))),
+      // colorFormat === 'Hex' && h(Text, {}, hsvaToHex(rgbaToHsva(color))),
+      // colorFormat === 'HSL' && h(Text, {}, hsvaToHslaString(rgbaToHsva(color))),
+      // colorFormat === 'HSV' && h(Text, {}, hsvaToHsvaString(rgbaToHsva(color)))
     )
   )
 }
