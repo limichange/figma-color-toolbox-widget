@@ -1,5 +1,6 @@
 import { hsvaToHex, RgbaColor, rgbaToHsva } from '../utils/convert'
 import { ColorDisplayArea } from './components/ColorDisplayArea'
+import { NumberInput } from './components/NumberInput'
 import { colorPickerIcon } from './images/colorPickerIcon'
 import { horizontalSmallLayoutIcon } from './images/horizontalSmallLayoutIcon'
 import { updateIcon } from './images/updateIcon'
@@ -202,7 +203,8 @@ function Widget() {
       },
       h(ColorDisplayArea, {
         color: backgroundColor,
-      })
+      }),
+      h(NumberInput)
       // colorFormat === 'RGB' && h(Text, {}, hsvaToRgbaString(rgbaToHsva(color))),
       // colorFormat === 'Hex' && h(Text, {}, hsvaToHex(rgbaToHsva(color))),
       // colorFormat === 'HSL' && h(Text, {}, hsvaToHslaString(rgbaToHsva(color))),
