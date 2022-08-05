@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@figma/plugin-typings': 1.49.0
+  '@figma/plugin-typings': 1.50.0
   '@figma/widget-typings': 1.5.0
   '@types/react': ^18.0.15
   '@types/react-dom': ^18.0.6
@@ -27,8 +27,8 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
 
 devDependencies:
-  '@figma/plugin-typings': 1.49.0
-  '@figma/widget-typings': 1.5.0_2fot2btdkqtgkbrthnndtjhxru
+  '@figma/plugin-typings': 1.50.0
+  '@figma/widget-typings': 1.5.0_s45dgnpgxx5pbi5mdhhnkzdpca
   css-loader: 6.7.1_webpack@5.74.0
   html-webpack-plugin: 5.5.0_webpack@5.74.0
   react-dev-utils: 12.0.1_xnp4kzegbjokq62cajex2ovgkm
@@ -66,16 +66,16 @@ packages:
     engines: {node: '>=10.0.0'}
     dev: true
 
-  /@figma/plugin-typings/1.49.0:
-    resolution: {integrity: sha512-72tKC61RPkrBZ+uzj+TtL3bVAmxahZKv/TfElbrY9sBoZvr4/+4gw7hnJYiln5xBJHiJ4KTcjUy+6D1qUuWlTA==}
+  /@figma/plugin-typings/1.50.0:
+    resolution: {integrity: sha512-ue1He4XimFEjY7eS7x6tBY6pyMp7zfVOjgStFioqKUxPPIz0gCFLmFUjR5g6fMrYJCqAMP5/Mjwq4Ks0vpe2sA==}
     dev: true
 
-  /@figma/widget-typings/1.5.0_2fot2btdkqtgkbrthnndtjhxru:
+  /@figma/widget-typings/1.5.0_s45dgnpgxx5pbi5mdhhnkzdpca:
     resolution: {integrity: sha512-gktog9TSdFpFIu3mEK3e8EsAUhBOmfVzHVMACR/0DRCneXUNaFyQnr/0Layg6BvAUyYzcYv8jT7Oe2e7GHIQ4g==}
     peerDependencies:
       '@figma/plugin-typings': 1.x
     dependencies:
-      '@figma/plugin-typings': 1.49.0
+      '@figma/plugin-typings': 1.50.0
     dev: true
 
   /@jridgewell/gen-mapping/0.3.2:
